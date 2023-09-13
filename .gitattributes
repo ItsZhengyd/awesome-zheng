@@ -1,2 +1,2 @@
 # 配置所有文件使用 LF 作为行尾符风格
-* text=auto eol=crlf
+* text=auto eol=lf
