@@ -1,2 +1,2 @@
 # awesome-zheng
-个人练习项目
+低质量的示例代码，大多copy而来
