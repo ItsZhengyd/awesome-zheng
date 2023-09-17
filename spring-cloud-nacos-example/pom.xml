@@ -5,6 +5,7 @@
     <modules>
         <module>spring-cloud-nacos-config-example</module>
         <module>spring-cloud-nacos-config-multi-data-ids-example</module>
+        <module>spring-cloud-nacos-discovery-example</module>
     </modules>
 
     <properties>
