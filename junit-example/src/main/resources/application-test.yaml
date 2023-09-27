@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb1;MODE=LEGACY
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true # 这是可选的，启用H2的Web控制台以查看数据库状态
+  hibernate:
+    ddl-auto: update # 可选值包括 "create"、"update"、"create-drop" 等
