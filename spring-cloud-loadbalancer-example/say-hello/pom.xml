@@ -11,7 +11,7 @@
     <groupId>com.example</groupId>
     <artifactId>spring-cloud-loadbalancer-say-hello</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>spring-cloud-loadbalancer-say-hello</name>
+    <name>say-hello</name>
     <description>spring-cloud-loadbalancer-say-hello</description>
     <properties>
         <spring-boot.repackage.skip>true</spring-boot.repackage.skip>

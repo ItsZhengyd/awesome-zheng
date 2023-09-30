@@ -11,8 +11,8 @@
     <groupId>com.example</groupId>
     <artifactId>spring-cloud-loadbalancer-user</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>spring-cloud-loadbalancer-user</name>
-    <description>Demo project for Spring Boot</description>
+    <name>user</name>
+    <description>spring-cloud-loadbalancer-user</description>
     <properties>
         <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
         <java.version>17</java.version>
