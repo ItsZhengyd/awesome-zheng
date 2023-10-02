@@ -18,6 +18,12 @@
     <name>dubbo-example</name>
     <description>Dubbo Samples Spring Boot</description>
 
+    <modules>
+        <module>consumer</module>
+        <module>interface</module>
+        <module>provider</module>
+    </modules>
+
     <properties>
         <dubbo.version>3.2.0-beta.4</dubbo.version>
         <spring-boot.version>2.7.8</spring-boot.version>
