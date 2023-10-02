@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * @author zhengyd
+ */
 @SpringBootApplication
 @EnableDiscoveryClient
 public class NacosConsumerApplication {
@@ -27,7 +30,7 @@ public class NacosConsumerApplication {
     }
 
     @RestController
-    public class TestController {
+    public static class TestController {
 
         private final RestTemplate restTemplate;
 
