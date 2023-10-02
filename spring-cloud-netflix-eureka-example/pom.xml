@@ -5,10 +5,17 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.example</groupId>
-	<artifactId>demo</artifactId>
+	<artifactId>spring-cloud-netflix-eureka-example</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>spring-cloud-netflix-eureka-example</name>
 	<description>spring-cloud-netflix-eureka-example</description>
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>eureka-client</module>
+		<module>eureka-server</module>
+		<module>feign-client</module>
+	</modules>
 
 	<properties>
 		<maven.compiler.source>17</maven.compiler.source>
