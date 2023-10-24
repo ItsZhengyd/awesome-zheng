@@ -34,9 +34,9 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/api/login")
+                        .permitAll()
                         .anyRequest().authenticated()
-
                 );
         return http.build();
     }
@@ -48,6 +48,8 @@ public class SecurityConfig {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userDetailsService);
         authenticationProvider.setPasswordEncoder(passwordEncoder);
+
+        MyAuthenticationProvider myAuthenticationProvider = new MyAuthenticationProvider();
 
         return new ProviderManager(authenticationProvider);
     }
