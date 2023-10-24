@@ -5,7 +5,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 import javax.sql.DataSource;
 
@@ -30,10 +33,4 @@ public class HelloAuthenticationApplication {
 				.build();
 	}
 
-//	@Bean
-//	ObservationRegistry<ObservationRegistry> observationRegistry() {
-//		ObservationRegistry registry = ObservationRegistry.create();
-//		registry.observationConfig().observationHandler(new ObservationTextHandler());
-//		return registry;
-//	}
 }
