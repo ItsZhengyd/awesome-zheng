@@ -18,6 +18,8 @@
     <modules>
         <module>hello-security</module>
         <module>hello-authentication</module>
+        <module>customizer</module>
+        <module>mfa</module>
     </modules>
 
 </project>
