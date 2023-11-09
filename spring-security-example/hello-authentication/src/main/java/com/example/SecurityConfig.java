@@ -80,6 +80,11 @@ public class SecurityConfig {
         return new ProviderManager(authenticationProvider);
     }
 
+    /**
+     * 硬编码方式提供用户凭证到内存，这对快速启动和测试非常有用，但在生产环境中不常用。
+     * @param dataSource
+     * @return
+     */
     @Bean
     public UserDetailsService userDetailsService(DataSource dataSource) {
         UserDetails user = User.builder()
