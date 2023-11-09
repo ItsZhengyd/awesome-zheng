@@ -17,3 +17,8 @@ spring:
   mvc:
     view:
       prefix: /WEB-INF/views/
+jwt:
+  private:
+    key: classpath:app.key
+  public:
+    key: classpath:app.pub
