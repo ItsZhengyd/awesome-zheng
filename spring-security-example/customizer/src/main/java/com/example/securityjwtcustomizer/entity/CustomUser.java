@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -22,7 +23,7 @@ public class CustomUser {
     private String name;
     @Email
     private String email;
-    @Min(8)
+    @Size(min = 8, message = "密码长度不能小于8")
     private String password;
 
     @JsonCreator

@@ -14,9 +14,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.RememberMeAuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -62,6 +64,7 @@ public class SecurityConfig {
                 "/register",
                 "/login",
                 "/logout",
+                "/public/**",
                 "/api/login",
                 "/api/token",
                 "/api/health",
@@ -81,7 +84,8 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/db/**").access(allOf(hasAuthority("db"), hasRole("ADMIN")))
                         .anyRequest().authenticated()
-                );
+                )
+                .oauth2ResourceServer(configurer -> configurer.jwt(Customizer.withDefaults())); // spring-security6.1以前使用.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);spring-security6.1开始不推荐7将会移除
 
         http.addFilterBefore(loginFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
@@ -102,6 +106,10 @@ public class SecurityConfig {
 
         AnonymousAuthenticationProvider anonymousAuthenticationProvider = new AnonymousAuthenticationProvider("anonymous");
 
+        // 注意：如果使用自定义JWTProvider，则需要在这里配置
+        // 这里使用的是spring-boot-starter-oauth2-resource-server的默认实现，只需要在SecurityFilterChain中添加
+        // .oauth2ResourceServer(configurer -> configurer.jwt(Customizer.withDefaults()));即可启用，不用再在这里配置
+        // 另外自定义两个JWT的编解码器就可以了：参考 JwtDecoder 和 JwtEncoder
         JwtAuthenticationProvider jwtAuthenticationProvider = new JwtAuthenticationProvider(jwtDecoder);
 
         return new ProviderManager(
