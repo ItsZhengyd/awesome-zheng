@@ -30,6 +30,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.List;
 
 import static jakarta.servlet.DispatcherType.ERROR;
 import static jakarta.servlet.DispatcherType.FORWARD;
@@ -56,6 +57,19 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        List<String> permitAllList = List.of(
+                "/register",
+                "/login",
+                "/logout",
+                "/api/login",
+                "/api/token",
+                "/api/health",
+                "/static/**",
+                "/signup",
+                "/about"
+        );
+
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(withDefaults())
@@ -63,9 +77,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests((authorize) -> authorize
                         .dispatcherTypeMatchers(FORWARD, ERROR).permitAll()
-                        .requestMatchers("/api/login").permitAll()
-                        .requestMatchers("/api/token").permitAll()
-                        .requestMatchers("/static/**", "/signup", "/about").permitAll()
+                        .requestMatchers(permitAllList.toArray(new String[0])).permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/db/**").access(allOf(hasAuthority("db"), hasRole("ADMIN")))
                         .anyRequest().authenticated()
