@@ -59,7 +59,7 @@ public class LoginFilter extends OncePerRequestFilter {
         String remoteAddr = request.getRemoteAddr();
         String remoteHost = request.getRemoteHost();
         AtomicInteger times = cacheLoginTimes.get(remoteAddr + remoteHost, key -> new AtomicInteger(0));
-        return times.incrementAndGet() >= 3;
+        return times.incrementAndGet() >= 100;
     }
 
     private Authentication createAuthenticationFromJwt(String jwtToken) {
