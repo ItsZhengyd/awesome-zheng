@@ -6,18 +6,17 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AnonymousAuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.RememberMeAuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,11 +24,10 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import javax.sql.DataSource;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
@@ -44,14 +42,17 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class SecurityConfig {
 
-//    @Value("${jwt.public.key}")
-//    RSAPublicKey key;
-//
-//    @Value("${jwt.private.key}")
-//    RSAPrivateKey priv;
+    @Value("${jwt.public.key}")
+    RSAPublicKey publicKey;
 
-    @Autowired
-    private LoginFilter loginFilter;
+    @Value("${jwt.private.key}")
+    RSAPrivateKey privateKey;
+
+    private final LoginFilter loginFilter;
+
+    public SecurityConfig(LoginFilter loginFilter) {
+        this.loginFilter = loginFilter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -74,31 +75,68 @@ public class SecurityConfig {
         return http.build();
     }
 
-//    @Bean
-//    public AuthenticationManager authenticationManager(
-//            UserDetailsService userDetailsService,
-//            PasswordEncoder passwordEncoder) {
-//        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-//        authenticationProvider.setUserDetailsService(userDetailsService);
-//        authenticationProvider.setPasswordEncoder(passwordEncoder);
-//
-//        return new ProviderManager(authenticationProvider);
-//    }
-//
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-//    }
-//
-//    @Bean
-//    JwtDecoder jwtDecoder() {
-//        return NimbusJwtDecoder.withPublicKey(this.key).build();
-//    }
-//
-//    @Bean
-//    JwtEncoder jwtEncoder() {
-//        JWK jwk = new RSAKey.Builder(this.key).privateKey(this.priv).build();
-//        JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
-//        return new NimbusJwtEncoder(jwks);
-//    }
+    @Bean
+    public AuthenticationManager authenticationManager(
+            UserDetailsService userDetailsService,
+            PasswordEncoder passwordEncoder,
+            JwtDecoder jwtDecoder) {
+
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
+
+
+        RememberMeAuthenticationProvider rememberMeAuthenticationProvider = new RememberMeAuthenticationProvider("remember-me");
+
+        AnonymousAuthenticationProvider anonymousAuthenticationProvider = new AnonymousAuthenticationProvider("anonymous");
+
+        JwtAuthenticationProvider jwtAuthenticationProvider = new JwtAuthenticationProvider(jwtDecoder);
+
+        return new ProviderManager(
+                daoAuthenticationProvider,
+                rememberMeAuthenticationProvider,
+                anonymousAuthenticationProvider,
+                jwtAuthenticationProvider
+        );
+    }
+
+    /**
+     *
+     * DaoAuthenticationProvider 默认使用的加密方式就是 PasswordEncoderFactories.createDelegatingPasswordEncoder()，不用再特别设置
+     * <p>
+     * PasswordEncoderFactories.createDelegatingPasswordEncoder() 是一个工厂方法，用于创建一个委托密码编码器。
+     * 这个委托编码器可以处理多种密码编码策略，包括 bcrypt、SHA-256、MD5等。
+     */
+    @Deprecated
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+
+    @Bean
+    JwtDecoder jwtDecoder() {
+        return NimbusJwtDecoder.withPublicKey(this.publicKey).build();
+    }
+
+    /**
+     *
+     * 第一次请求jwt时，会生成一个公钥和私钥，公钥和私钥会存储到redis中，后续请求jwt时，会从redis中获取公钥和私钥，然后使用公钥和私钥进行加密和解密。
+     * <br>
+     * <br>
+     * <p>
+     * 但是这样存在一个问题，如果redis宕机了，那么jwt就无法使用了。
+     * <p>
+     *     * 解决方案：
+     *     <li> 1. 定时任务，每隔一段时间，将公钥和私钥存储到数据库中。
+     *     <li> 2. 利用redisson的分布式锁，在每次请求jwt时，先获取分布式锁，如果获取到锁，则将公钥和私钥存储到redis中，并释放锁。
+     *     <li> 3. 保存在项目文件中，每次启动时，将公钥和私钥加载到内存中。但是这样就存在一个问题，如果项目文件被泄露了，那么公钥和私钥就泄露了。(不推荐)
+     * </p>
+     */
+    @Bean
+    JwtEncoder jwtEncoder() {
+        JWK jwk = new RSAKey.Builder(this.publicKey).privateKey(this.privateKey).build();
+        JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+        return new NimbusJwtEncoder(jwks);
+    }
 }
