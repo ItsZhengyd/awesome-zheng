@@ -3,10 +3,7 @@ package com.example.securityjwtcustomizer.controller;
 import com.example.securityjwtcustomizer.config.CurrentUser;
 import com.example.securityjwtcustomizer.entity.CustomUser;
 import com.example.securityjwtcustomizer.service.CustomUserService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UserController {
@@ -20,6 +17,11 @@ public class UserController {
     @GetMapping("/user")
     public CustomUser user(@CurrentUser CustomUser currentUser) {
         return currentUser;
+    }
+
+    @GetMapping("/user/{name}")
+    public CustomUser login(@PathVariable String name){
+        return customUserService.findByName(name);
     }
 
     /**

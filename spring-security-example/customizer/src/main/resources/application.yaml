@@ -17,6 +17,10 @@ spring:
   mvc:
     view:
       prefix: /WEB-INF/views/
+  data:
+    redis:
+      host: localhost
+      port: 6379
 jwt:
   private:
     key: classpath:app.key

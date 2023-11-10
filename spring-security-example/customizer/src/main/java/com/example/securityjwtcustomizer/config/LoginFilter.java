@@ -40,6 +40,7 @@ public class LoginFilter extends OncePerRequestFilter {
             if (isLoginLimitExceeded(request)) {
                 throw new RuntimeException("登录失败次数过多，请稍后再试");
             }
+
         }
 
         // 从请求中获取JWT令牌
@@ -51,10 +52,7 @@ public class LoginFilter extends OncePerRequestFilter {
             Authentication authentication = createAuthenticationFromJwt(jwtToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-
-        System.out.println(1);
         filterChain.doFilter(request, response);
-        System.out.println(2);
     }
 
     private boolean isLoginLimitExceeded(HttpServletRequest request) {

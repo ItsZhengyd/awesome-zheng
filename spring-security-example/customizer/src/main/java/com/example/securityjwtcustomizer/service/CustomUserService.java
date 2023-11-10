@@ -3,6 +3,7 @@ package com.example.securityjwtcustomizer.service;
 
 import com.example.securityjwtcustomizer.entity.CustomUser;
 import com.example.securityjwtcustomizer.repository.CustomUserRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,7 +19,8 @@ public class CustomUserService {
         userRepository.save(currentUser);
     }
 
-    public CustomUser findByUsername(String username) {
-        return userRepository.findByName(username);
+    @Cacheable(cacheNames = "customUserByName",key = "#name")
+    public CustomUser findByName(String name) {
+        return userRepository.findByName(name);
     }
 }
