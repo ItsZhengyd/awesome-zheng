@@ -110,6 +110,9 @@ public class SecurityConfig {
         // 这里使用的是spring-boot-starter-oauth2-resource-server的默认实现，只需要在SecurityFilterChain中添加
         // .oauth2ResourceServer(configurer -> configurer.jwt(Customizer.withDefaults()));即可启用，不用再在这里配置
         // 另外自定义两个JWT的编解码器就可以了：参考 JwtDecoder 和 JwtEncoder
+        // 前端访问示例：
+        // curl --location 'http://localhost:8080/' \
+        //--header 'Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoibHdkMjMzIiwiZXhwIjoxNjk5Njc1OTQwLCJpYXQiOjE2OTk2Mzk5NDAsInNjb3BlIjoiIn0.Pt0nrq0RnjgOnokL9t5KNd9QLWvAhyJT7PZ421yHg5JKSBaZSHYQSZ4YzmkYc2Njcfjv52HZJeR-LxoiPL9OxbqCa8FTE2nP94nruR4ogwdapEjZ4CImDm3m4Hzlt4D-O42LWAFguiRXnbVcEVS4Tn7y2vRqnBRcRf8VYoddkiPp-j5VO0UKygRM35ZRBLbhkaChT5aLrTo0WOa30esVmFrjJnYWl_abpP1mQ1KlsUZS15hNJS3VKBQ-O52fegyjKNPYxnOeYKwkgpGC_lc5SohDDym-zDfPdbZfaOaSoRxH_I__dc10HQL0sluZAY0hDaFRltQkiZvKpRbnvhQ1eg' \
         JwtAuthenticationProvider jwtAuthenticationProvider = new JwtAuthenticationProvider(jwtDecoder);
 
         return new ProviderManager(
