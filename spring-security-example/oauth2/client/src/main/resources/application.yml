@@ -7,10 +7,11 @@ server:
 
 logging:
   level:
-    root: DEBUG
-    org.springframework.web: DEBUG
-    org.springframework.security: DEBUG
-    org.springframework.boot.autoconfigure: DEBUG
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+    org.springframework.boot.autoconfigure: INFO
+
 
 spring:
   thymeleaf:
@@ -31,8 +32,7 @@ spring:
           google:
             client-id: 132394823585-i4ejosvdq8a5fl1u222tso1sukhl3v7s.apps.googleusercontent.com
             client-secret: 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
-            redirect-uri: https://witty-leading-worm.ngrok-free.app:443/login/oauth2/code/google
-#            redirect-uri: http://localhost/login/oauth2/code/google
+            redirect-uri: http://127.0.0.1/login/oauth2/code/google
             scope: openid,profile
           github:
             client-id: 016611c9ea57573411f0
@@ -63,3 +63,14 @@ spring:
             jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
           github:
             authorization-uri: https://github.com/login/oauth/authorize
+  datasource:
+    username: root
+    password: cape
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/spring-security-oauth2?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    hikari:
+      schema: classpath:db.sql
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update

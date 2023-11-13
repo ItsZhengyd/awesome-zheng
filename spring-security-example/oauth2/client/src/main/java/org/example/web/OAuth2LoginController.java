@@ -41,14 +41,4 @@ public class OAuth2LoginController {
         return "index";
     }
 
-    // 处理来自Google的oauth2回调：/login/oauth2/code/google
-    @GetMapping("/login/oauth2/code/login-client")
-    public String google(Model model, @RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient authorizedClient,
-                         @AuthenticationPrincipal OAuth2User oauth2User) {
-        model.addAttribute("userName", oauth2User.getName());
-        model.addAttribute("clientName", authorizedClient.getClientRegistration().getClientName());
-        model.addAttribute("userAttributes", oauth2User.getAttributes());
-        return "index";
-    }
-
 }
