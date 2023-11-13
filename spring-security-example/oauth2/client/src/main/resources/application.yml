@@ -25,20 +25,21 @@ spring:
             client-secret: openid-connect
             client-authentication-method: client_secret_basic
             authorization-grant-type: authorization_code
-            redirect-uri-template: http://127.0.0.1:80/login/oauth2/code/login-client
             redirect-uri: http://127.0.0.1:80/login/oauth2/code/login-client
             scope: openid,profile
             client-name: Spring
           google:
             client-id: 132394823585-i4ejosvdq8a5fl1u222tso1sukhl3v7s.apps.googleusercontent.com
             client-secret: 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
-            redirect-uri-template: https://witty-leading-worm.ngrok-free.app:443/login/oauth2/code/google
             redirect-uri: https://witty-leading-worm.ngrok-free.app:443/login/oauth2/code/google
 #            redirect-uri: http://localhost/login/oauth2/code/google
             scope: openid,profile
           github:
-            client-id: your-app-client-id
-            client-secret: your-app-client-secret
+            client-id: 016611c9ea57573411f0
+            client-secret: ab69189fda5a2e4c8c13aaa895800842d8d7cef7
+            redirect-uri: http://localhost:80/login/oauth2/code/github
+            provider: github
+            scope: read:user,public_repo
           facebook:
             client-id: your-app-client-id
             client-secret: your-app-client-secret
