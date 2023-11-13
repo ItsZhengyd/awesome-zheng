@@ -1,0 +1,64 @@
+server:
+  port: 80
+  servlet:
+    session:
+      cookie:
+        name: jsessionid_client
+
+logging:
+  level:
+    root: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.boot.autoconfigure: DEBUG
+
+spring:
+  thymeleaf:
+    cache: false
+  security:
+    oauth2:
+      client:
+        registration:
+          login-client:
+            provider: spring
+            client-id: login-client
+            client-secret: openid-connect
+            client-authentication-method: client_secret_basic
+            authorization-grant-type: authorization_code
+            redirect-uri-template: http://127.0.0.1:80/login/oauth2/code/login-client
+            redirect-uri: http://127.0.0.1:80/login/oauth2/code/login-client
+            scope: openid,profile
+            client-name: Spring
+          google:
+            client-id: 132394823585-i4ejosvdq8a5fl1u222tso1sukhl3v7s.apps.googleusercontent.com
+            client-secret: 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
+            redirect-uri-template: https://witty-leading-worm.ngrok-free.app:443/login/oauth2/code/google
+            redirect-uri: https://witty-leading-worm.ngrok-free.app:443/login/oauth2/code/google
+#            redirect-uri: http://localhost/login/oauth2/code/google
+            scope: openid,profile
+          github:
+            client-id: your-app-client-id
+            client-secret: your-app-client-secret
+          facebook:
+            client-id: your-app-client-id
+            client-secret: your-app-client-secret
+          okta:
+            client-id: your-app-client-id
+            client-secret: your-app-client-secret
+        provider:
+          spring:
+            authorization-uri: http://127.0.0.1:9001/oauth2/authorize
+            token-uri: http://127.0.0.1:9001/oauth2/token
+            jwk-set-uri: http://127.0.0.1:9001/oauth2/jwks
+          okta:
+            authorization-uri: https://your-subdomain.oktapreview.com/oauth2/v1/authorize
+            token-uri: https://your-subdomain.oktapreview.com/oauth2/v1/token
+            user-info-uri: https://your-subdomain.oktapreview.com/oauth2/v1/userinfo
+            jwk-set-uri: https://your-subdomain.oktapreview.com/oauth2/v1/keys
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://www.googleapis.com/oauth2/v4/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
+          github:
+            authorization-uri: https://github.com/login/oauth/authorize

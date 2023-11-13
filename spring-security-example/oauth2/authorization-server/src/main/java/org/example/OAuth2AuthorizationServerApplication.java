@@ -1,12 +1,11 @@
-package com.example;
+package org.example;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class GatewayDemoApplication {
-
+public class OAuth2AuthorizationServerApplication {
     public static void main(String[] args) {
-        SpringApplication.run(GatewayDemoApplication.class, args);
+        SpringApplication.run(OAuth2AuthorizationServerApplication.class, args);
     }
 }

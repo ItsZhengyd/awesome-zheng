@@ -1,0 +1,31 @@
+server:
+  port: 9001
+  servlet:
+    session:
+      cookie:
+        name: jsessionid_authorization_server
+logging:
+  level:
+    org.springframework.security: trace
+#spring:
+#  security:
+#    oauth2:
+#      authorizationserver:
+#        client:
+#          oidc-client:
+#            registration:
+#              client-id: "login-client"
+#              client-secret: "{noop}openid-connect"
+#              client-authentication-methods:
+#                - "client_secret_basic"
+#              authorization-grant-types:
+#                - "authorization_code"
+#                - "refresh_token"
+#              redirect-uris:
+#                - "http://127.0.0.1:80/login/oauth2/code/oidc-client"
+#              post-logout-redirect-uris:
+#                - "http://127.0.0.1:80/"
+#              scopes:
+#                - "openid"
+#                - "profile"
+#            require-authorization-consent: true

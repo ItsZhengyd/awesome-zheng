@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>spring-security-example</artifactId>
+    <artifactId>oauth2</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
@@ -16,11 +16,9 @@
     </properties>
 
     <modules>
-        <module>hello-security</module>
-        <module>hello-authentication</module>
-        <module>customizer</module>
-        <module>mfa</module>
-        <module>oauth2</module>
+        <module>authorization-server</module>
+        <module>client</module>
+        <module>resource-server</module>
     </modules>
 
 </project>
