@@ -15,13 +15,31 @@
  */
 package org.example.web;
 
+import jakarta.annotation.Resource;
+import org.example.entity.CustomUser;
+import org.example.entity.Orders;
+import org.example.service.OrdersService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * OAuth2 Log in controller.
@@ -32,13 +50,42 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class OAuth2LoginController {
 
+    @Resource
+    private OrdersService ordersService;
+
     @GetMapping("/")
     public String index(Model model, @RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient authorizedClient,
                         @AuthenticationPrincipal OAuth2User oauth2User) {
         model.addAttribute("userName", oauth2User.getName());
         model.addAttribute("clientName", authorizedClient.getClientRegistration().getClientName());
         model.addAttribute("userAttributes", oauth2User.getAttributes());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        authorities.stream().forEach(grantedAuthority -> {
+            String authority = grantedAuthority.getAuthority();
+        });
         return "index";
+    }
+
+    @GetMapping("/orders")
+    @ResponseBody
+    public List<Orders> getOrders(){
+        String userName = "";
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication instanceof OAuth2AuthenticationToken){
+            OAuth2AuthenticationToken oAuth2AuthenticationToken = (OAuth2AuthenticationToken)authentication;
+            OAuth2User oAuth2User = oAuth2AuthenticationToken.getPrincipal();
+            userName = oAuth2User.getName();
+        }
+
+        if(authentication instanceof UsernamePasswordAuthenticationToken) {
+            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = (UsernamePasswordAuthenticationToken)authentication;
+            CustomUser customUser = (CustomUser)usernamePasswordAuthenticationToken.getPrincipal();
+            userName = customUser.getName();
+        }
+
+        return ordersService.findAllByUserName(userName);
+
     }
 
 }
