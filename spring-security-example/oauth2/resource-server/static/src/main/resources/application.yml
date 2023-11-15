@@ -4,3 +4,5 @@ spring:
       resourceserver:
         jwt:
           key-value: classpath:simple.pub
+          issuer-uri: http://127.0.0.1:9001/issuer
+          jwk-set-uri: http://127.0.0.1:9001/.well-known/jwks.json

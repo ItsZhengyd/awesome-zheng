@@ -31,6 +31,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
+import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
+import org.springframework.security.oauth2.core.OAuth2RefreshToken;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationResponse;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -53,17 +61,42 @@ public class OAuth2LoginController {
     @Resource
     private OrdersService ordersService;
 
+    public static String  privateKeyStr = "-----BEGIN PRIVATE KEY-----\n" +
+            "MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDWKQ+zKhzAT3/d\n" +
+            "V3SKl+qtYBXTGlds4sqAQifTqGEDPXqSdu60qKS53sRogwuMAXhaYEyCvpE7gXZ+\n" +
+            "VEMa/bOHD8YurFgXbu0H5M/SntjsSkamgrfc2QlnLwVe9ss47RsIqM7a3DTOnb1+\n" +
+            "p/C1w8g+WGnoKqbqCY7UViYgoEPhtYQ3Udp5WFQzPUC84LaRlhkjHo/qVNVnEIf/\n" +
+            "cun2SfdvWlu+hEZsT/GW0w8CxcEJ2Y/gBYgBCCIEHsokSjlnUU9k9E7AIz+UyJis\n" +
+            "y/TVGE+V6NHKESnpsGhFnS411Gaugtq/JRMxYmi73R7qYbtKMM3tXb4HvR+4rYbI\n" +
+            "i1qAX8I3AgMBAAECggEBAL+zccJG6AWdJC/VoRSOeBtJ7z9QTQHC4NF+ZngoOO7V\n" +
+            "kWqZ24MLkqhuqBGFfEiO6FS97r76JrbFZHQgqRD4GEPF8vjEfPY87SAryXwXhMW+\n" +
+            "lw9l439lJ+2dQYmIENGcLJ7LvJ5cj0iEGqPNYMLTxeNI8URJKbBFbfzUQLzjuN/I\n" +
+            "H7drurcqIdY11MDOd3+KdhAyNS+4njTlg6J/Sm3HepoPoXk+ZrcQhO0EPE+T5PNP\n" +
+            "esVUGCeFXyqPEqHnQU5xBEdjsNJFsHLOH6dbh2m81q0VyBp3+65yikQmUDmL3cyJ\n" +
+            "pCrkPXYPnUX4k1NGsfUPv6Z4KdYTM1evc1awcdb2VkECgYEA+mePYBGVw6R3giH9\n" +
+            "wtV9CpxxOQn9b4LS4+X7+fqhrAN1ePMpBaosuA2p8qMEj7kxM3ILJI+V+HNF2mRU\n" +
+            "5k36+1KjMiEblLjCm26k9YghHEUsn2bzwqUq1bHne39XYbXl0Is0/7UGJs5ZkADq\n" +
+            "huLThU34I/fCIo9s4iFWDQYEAYUCgYEA2vIqpGzV+Hw8f2wyaE9pkjuDY12uKPu4\n" +
+            "LNg0Kq5AidXEt77k1gwmzZpL8iaAEICj+H6H24UleCZplW6A4ixImL00ag/eJZF+\n" +
+            "zeo2kqK4/OGYUiegbmVzRrjISVFwYnXOOdYPqzKSbKJTYDg3HurUn2sZ++PL42Js\n" +
+            "jDBbEt2S44sCgYEArVmoPj+uSITBX0uc25bkO8ZV88DgvKP6z17V9Bb4eZbjaloc\n" +
+            "GhnXX4vGDX2hmMYCM7VN1X+5uQhEYY534AA4MmjhJcEZ0Pmfb+9HL9uP4HxbCfdB\n" +
+            "5YxmfQ3uTOa5XaGJebgFdsihe5f7FOAtfDfnay+xC2Vn9nkITfv6EIYLm+kCgYAZ\n" +
+            "GXPr/5IT92IUFXo93QS0P+BTDtU9W4YElhB86Bb79iakDd078I6uOUcFjoZV3flu\n" +
+            "LksyzjO6b2ThPZbG1t7Hq8ELe6Ay3FgWEQiKjN76Fn6YxHQu07CAZgSH6y8gCnNG\n" +
+            "zBRlwtloXL+EI02mXLNdRzDmYHnqKklZVN3L7ty8+wKBgQDnMEqD2oK79C4s4OLp\n" +
+            "UVR3LEgEZC/coLS3iZorrjmyEd5eelFWsUg6kTsO8NND0FhqtJzB7DPhU78sYzqj\n" +
+            "fEoai9hvw9+ma66tBZh5+F0lgi0MapVFfhq7yQZDXwH78LvYVnLer/9pJIFACnsv\n" +
+            "p3GhB78svPMT1g6E0xvEI0mOnw==\n" +
+            "-----END PRIVATE KEY-----";
     @GetMapping("/")
     public String index(Model model, @RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient authorizedClient,
                         @AuthenticationPrincipal OAuth2User oauth2User) {
         model.addAttribute("userName", oauth2User.getName());
         model.addAttribute("clientName", authorizedClient.getClientRegistration().getClientName());
         model.addAttribute("userAttributes", oauth2User.getAttributes());
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        authorities.stream().forEach(grantedAuthority -> {
-            String authority = grantedAuthority.getAuthority();
-        });
+        model.addAttribute("accessToken", authorizedClient.getAccessToken().getTokenValue());
+        model.addAttribute("refreshToken", authorizedClient.getRefreshToken().getTokenValue());
         return "index";
     }
 

@@ -58,20 +58,25 @@ public class OAuth2AuthorizationServerSecurityConfiguration {
     @Order(1)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
 
+        // 应用默认的 OAuth 2.0 Authorization Server 安全性配置。这个方法会配置一些常见的 OAuth 2.0 安全性设置。
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
 
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
                 .oidc(Customizer.withDefaults());
+
         http
                 .exceptionHandling(exceptions -> exceptions
                         .defaultAuthenticationEntryPointFor(
-                                new LoginUrlAuthenticationEntryPoint("/login"),
-                                new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
+                                new LoginUrlAuthenticationEntryPoint("/login"),     // 指定未经身份验证的用户访问受保护资源时重定向到的登录页面。
+                                new MediaTypeRequestMatcher(MediaType.TEXT_HTML)    // 当用户请求需要身份验证的资源但未经过身份验证时，返回 HTML 类型的响应，通常是一个登录页面。
                         )
-                ).oauth2ResourceServer(resourceServer -> resourceServer
-                        .jwt(Customizer.withDefaults()));
+                )
+                .oauth2ResourceServer(resourceServer -> resourceServer
+                        .jwt(Customizer.withDefaults()) // 启动 JSON Web Token (JWT) 的支持，并使用默认的配置。
+                );
 
         return http.build();
+
     }
 
     /**
@@ -109,19 +114,13 @@ public class OAuth2AuthorizationServerSecurityConfiguration {
                 .redirectUri("http://127.0.0.1:80/authorized")
                 .scope(OidcScopes.OPENID)
                 .scope(OidcScopes.PROFILE)
-                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
-                .build();
-        RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("messaging-client")
-                .clientSecret("{noop}secret")
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
                 .scope("message:read")
                 .scope("message:write")
+                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
                 .build();
         // @formatter:on
 
-        return new InMemoryRegisteredClientRepository(loginClient, registeredClient);
+        return new InMemoryRegisteredClientRepository(loginClient);
     }
 
     /**

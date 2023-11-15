@@ -27,7 +27,7 @@ spring:
             client-authentication-method: client_secret_basic
             authorization-grant-type: authorization_code
             redirect-uri: http://127.0.0.1:80/login/oauth2/code/login-client
-            scope: openid,profile
+            scope: openid,profile,message:read,message:write
             client-name: Spring
           google:
             client-id: 132394823585-i4ejosvdq8a5fl1u222tso1sukhl3v7s.apps.googleusercontent.com
@@ -48,9 +48,10 @@ spring:
             client-secret: your-app-client-secret
         provider:
           spring:
-            authorization-uri: http://127.0.0.1:9001/oauth2/authorize
-            token-uri: http://127.0.0.1:9001/oauth2/token
-            jwk-set-uri: http://127.0.0.1:9001/oauth2/jwks
+            authorization-uri: http://127.0.0.1:9001/oauth2/authorize #认证端点的 URI，用于获取授权码。
+            token-uri: http://127.0.0.1:9001/oauth2/token #令牌端点的 URI，用于交换授权码或获取令牌。
+#            user-info-uri: http://127.0.0.1:9001/oauth2/user-info-uri #用户信息端点的 URI，用于获取用户的详细信息。
+            jwk-set-uri: http://127.0.0.1:9001/oauth2/jwks  #JSON Web Key Set（JWKS）端点的 URI，用于获取公钥，通常在验证 JWT 签名时使用。
           okta:
             authorization-uri: https://your-subdomain.oktapreview.com/oauth2/v1/authorize
             token-uri: https://your-subdomain.oktapreview.com/oauth2/v1/token
