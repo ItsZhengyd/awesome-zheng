@@ -7,10 +7,10 @@ server:
 
 logging:
   level:
-    root: INFO
-    org.springframework.web: INFO
-    org.springframework.security: INFO
-    org.springframework.boot.autoconfigure: INFO
+    root: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.boot.autoconfigure: DEBUG
 
 
 spring:
@@ -46,6 +46,13 @@ spring:
           okta:
             client-id: your-app-client-id
             client-secret: your-app-client-secret
+          wechat:
+            provider: wechat
+            client-name: wechat
+            client-id: your-app-client-id
+            client-secret: your-app-client-secret
+            authorization-grant-type: authorization_code
+            redirect-uri: http://localhost/wechat/callback.do
         provider:
           spring:
             authorization-uri: http://127.0.0.1:9001/oauth2/authorize #认证端点的 URI，用于获取授权码。
@@ -64,13 +71,14 @@ spring:
             jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
           github:
             authorization-uri: https://github.com/login/oauth/authorize
+          wechat:
+            authorization-uri: https://open.weixin.qq.com/connect/qrconnect?appid=wxbdc5610cc59c1631&redirect_uri=https://passport.yhd.com/wechat/callback.do&response_type=code&scope=snsapi_login&state=3d6be0a4035d839573b04816624a415e#wechat_redirect
+            token-uri: https://api.weixin.qq.com/sns/oauth2/access_token
   datasource:
     username: root
     password: cape
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/spring-security-oauth2?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
-    hikari:
-      schema: classpath:db.sql
   jpa:
     show-sql: true
     hibernate:
